@@ -16,13 +16,13 @@
 // pins for 4 digit timer
 int pinA = 13;
 int pinB = 12;
-int pinC = 2;
+int pinC = 5; // used to be 2
 int pinD = 3;
 int pinE = 4;
 int pinF = 11;
 int pinG = 10;
 
-int buttonPin = 5;
+int buttonPin = 2;  // used to be 5
 int buzzerPin = 6;
 
 int servoPin = 9;
@@ -30,6 +30,8 @@ int rotate = 0;
 int count = 1; // number on display
 int numHours;
 int secondsCount = 0; // for setting the time. After 3 seconds time will save
+int lastPushed = 0; // will be off by default
+
 
 Servo servo;
 
@@ -181,42 +183,94 @@ void loop()
 {
   // put your main code here, to run repeatedly:
   
-  if(digitalRead(buttonPin) == HIGH)
-  {
-    while(digitalRead(buttonPin) == HIGH)
-    {
-//      // count seconds go by
-//      if(digitalRead(buttonPin) == LOW)
-//      {
-//        increaseNumber(); // will increase the number shown
-//        break;
-//      }
-//      
-//      // check if 3 seconds have passed
-//      delay(1000);  // delay 1 second
-//      secondsCount++;
-//
-//      // if button is pressed for 3 or more seconds, numHours will save
-//      if(secondsCount >= 3)
-//      {
-//        Serial.println("3 seconds have passed");
-//        //while(Serial.available() == 0){}
-//        
-//        //saveTime(Serial.parseInt()); // int numHours
-//        //Serial.print(Serial.parseInt());
-//        //Serial.println(" was saved into numHours");
-//        break;  // to make sure user doesn't just keep holding button
-//      } // might have to use boolean didBreak if issue occurs because of this ^
-    }
+//  if(digitalRead(buttonPin) == HIGH)
+//  {
+//    while(digitalRead(buttonPin) == HIGH)
+//    {}
         
   
 
-//   if(secondsCount < 3) // to make sure they did or didn't save and we don't go next
-//    {
-    increaseNumber();
-    
+   if(digitalRead(buttonPin) == HIGH)
+  {
+    while(digitalRead(buttonPin) == HIGH)  // is currently high and last time it was high
+    {
+      // get out if the user un presses the button
       
-  }// end of if
+//      if(digitalRead(buttonPin) == LOW)
+//        break;
+
+      // need to use interrupt
+      
+      
+      delay(1000);
+      secondsCount++;
+      
+      if(secondsCount >= 3)
+      {
+         Serial.println("3 seconds have passed, saving time");
+         // reset seconds count once saved and leave loop
+         secondsCount = 0;
+         break;
+      }
+      
+    }
+
+    
+    
+    
+    switch(count)
+    {
+       case 0:
+         zero();
+         break;
+       case 1:
+         one();
+         break;
+
+       case 2:
+         two();
+         break;
+
+       case 3:
+         three();
+         break;
+  
+       case 4:
+         four();
+         break;
+  
+       case 5:
+         five();
+         break;
+       
+       case 6:
+         six();
+         break;
+
+       case 7:
+         seven();
+         break;
+
+       case 8:
+         eight();
+         break;
+
+       case 9:
+         nine();
+         break;
+
+       default:
+         zero();
+    }
+
+    Serial.println(count);
+    
+    count++; 
+    
+    if(count == 10)
+      count = 1; // reset count
+  }
+  
 
   
   
