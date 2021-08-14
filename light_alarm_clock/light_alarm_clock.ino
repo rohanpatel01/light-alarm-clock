@@ -29,9 +29,9 @@ int servoPin = 9;
 int rotate = 0;
 int count = 1; // number on display
 int numHours;
-volatile int secondsCount = 0; // for setting the time. After 3 seconds time will save
-int lastPushed = 0; // will be off by default
 
+int buttonPressed;
+int buttonReleased;
 
 Servo servo;
 
@@ -160,7 +160,6 @@ void save() // will show S on screen to show that it was saved
   digitalWrite(pinG, LOW);
 }
 
-
 void setup() 
 {
   // put your setup code here, to run once:
@@ -185,18 +184,19 @@ void loop()
 
   if(digitalRead(buttonPin) == HIGH)
   {
-    while(digitalRead(buttonPin) == HIGH)  // is currently high and last time it was high
-    {
-      // will pull out to check if button is held for 3 seconds
-      attachInterrupt(digitalPinToInterrupt(buttonPin), saveTime, RISING);
-      // wait until the user lets go so the interrupt function doesn't run again
-      while(digitalRead(buttonPin) == HIGH){}
-      
-    }// end of while
+    // will always be less than buttonReleased b/c this is recorded first in the time line
+    buttonPressed = millis(); 
+    // while button is held down do nothing
+    while(digitalRead(buttonPin) == HIGH){}
+    buttonReleased = millis();
 
-    // reset secondsCount cuz user let go as checked ^^
-    secondsCount = 0;
-         
+    // checking how long user holds button. If over 3s, time will save
+    if(buttonReleased - buttonPressed >= 3000)
+    {
+      Serial.println("pressed for 3 seconds, saving time");
+      saveTime();
+    }
+    
     switch(count)
     {
        case 0:
@@ -245,12 +245,9 @@ void loop()
     Serial.println(count);
     
     count++; 
-    
-    if(count == 10)
-      count = 1; // reset count
 
-    // reseting secondsCount so time will not keep saving
-    secondsCount = 0;
+    if(count == 10)
+      count = 1; // reset count    
   }
   
 
@@ -264,84 +261,15 @@ void loop()
  * seeing if user hold button for 3 or more seconds
  * if so, then the current time on 4 digit timer will save
  */
-void saveTime() // rename to ~ checkHold
+void saveTime()
 {
   // might have to use an if statement like in beginning of loop()
-    while(digitalRead(buttonPin) == HIGH)
-    {
-      // 1,000,000 (1 million) microseconds in 1 second
-      delayMicroseconds(1000000); // delay for 1 sec
-      secondsCount++;
-      
-      if(secondsCount >= 3)
-      {
-         Serial.println("3 seconds have passed, saving time");
-         // insert save function
-         break; // to get out of while loop
-      }
-    }
+    
     
 }
 
 
 
-void increaseNumber()
-{
-  switch(count)
-      {
-         case 0:
-           zero();
-           break;
-         case 1:
-           one();
-           break;
-  
-         case 2:
-           two();
-           break;
-  
-         case 3:
-           three();
-           break;
-    
-         case 4:
-           four();
-           break;
-    
-         case 5:
-           five();
-           break;
-         
-         case 6:
-           six();
-           break;
-  
-         case 7:
-           seven();
-           break;
-  
-         case 8:
-           eight();
-           break;
-  
-         case 9:
-           nine();
-           break;
-  
-         default:
-           zero();
-           
-      }// end of switch
-
-    Serial.println(count);
-    
-    count++;
-    
-    if(count == 10)
-      count = 1; // reset count
-
-    secondsCount = 0;
-}// end of increaseNumber()
 
 
 
