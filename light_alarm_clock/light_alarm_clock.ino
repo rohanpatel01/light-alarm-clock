@@ -278,21 +278,21 @@ void saveTimeAndCountdown(int numHours, int previous)
   int previousTime = previous;  // set preveous time as rn
   int eventInterval = 1000; // is 1 sec into future
   
-//  int numSeconds = numHours * 3600; // convert hours to seconds
-  int numSeconds = numHours * 3600;   // for testing. count will be * by 5 for seconds
+  int numSeconds = numHours * 3600;
 
   Serial.print("numSeconds: ");
   Serial.print(numSeconds);
-  
-//  while(numSeconds > 0)
-//  {
-//    if(currentTime - previousTime >= eventInterval)
-//      numSeconds--;
-//
-//    Serial.println(numSeconds);
-//    previousTime = currentTime;
-//    
-//  }
+
+  // counting down seconds till alarm
+  while(numSeconds > 0)
+  {
+    if(currentTime - previousTime >= eventInterval)
+      numSeconds--;
+
+    Serial.println(numSeconds);
+    previousTime = currentTime;
+    
+  }
 
   // saved time has passed and code below will run
 
@@ -309,29 +309,3 @@ void saveTimeAndCountdown(int numHours, int previous)
   
   
 }// end of saveTime()
-
-
-
-
-
-
-//void countTime()
-//{
-//  // convert hours to seconds
-//
-//  int numSeconds = numHours * 3600;
-//  
-//  while(numSeconds > 0)
-//  {
-//    delay(1000);
-//    numSeconds--;
-//  }
-//  Serial.println("Waaakeeee Upppp");
-//}
-//
-//
-//void saveTime(int timeVal)
-//{
-//  numHours = timeVal;
-//  save(); // display S on screen to show it saved
-//}
